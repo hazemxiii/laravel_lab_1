@@ -1,52 +1,36 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Post;
+use App\Http\Controllers\PostController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/posts', function () {
-    return view('posts', [
-        'posts' => Post::all()
-    ]);
-});
+Route::get('/posts', [PostController::class, 'index']);
 
-Route::get('/posts/create', function () {
-    return view('create-post');
-});
-Route::get('/posts/{id}', function ($id) {
-    return view('posts', [
-        'posts' => collect([Post::find($id)])
-    ]);
-});
+Route::get('/posts/create', [PostController::class, 'create']);
 
-Route::get('/posts/edit/{id}', function ($id) {
-    return view('create-post', [
-        'post' => Post::find($id)
-    ]);
-});
+Route::get('/posts/{id}', [PostController::class, 'show']);
 
-Route::get('/posts/delete/{id}', function ($id) {
-    Post::delete($id);
-    return redirect('/posts');
-});
+Route::get('/posts/edit/{id}', [PostController::class, 'edit']);
 
-Route::post('/posts', function () {
-    if (request('id')) {
-        Post::update([
-            'id' => request('id'),
-            'title' => request('title'),
-            'body' => request('body'),
-        ]);
-    } else {
-        Post::create([
-            'title' => request('title'),
-            'body' => request('body'),
-        ]);
-    }
-    return redirect('/posts');
-});
+Route::delete('/posts/{id}', [PostController::class, 'destroy']);
 
+Route::post('/posts', [PostController::class, 'store']);
+
+Route::get('/signup', [UserController::class, 'signup']);
+
+Route::post('/signup', [UserController::class, 'signup_post']);
+
+Route::get('/login', [UserController::class, 'login']);
+
+Route::post('/login', [UserController::class, 'login_post']);
+
+Route::post('/logout', [UserController::class, 'logout_post']);
 ?>

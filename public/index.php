@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
