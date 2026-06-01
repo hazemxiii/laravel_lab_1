@@ -22,7 +22,13 @@ Route::get('/posts/edit/{id}', [PostController::class, 'edit']);
 
 Route::delete('/posts/{id}', [PostController::class, 'destroy']);
 
+Route::patch('/posts/{id}/restore', [PostController::class, 'restore']);
+
+Route::delete('/posts/{id}/force-delete', [PostController::class, 'forceDelete']);
+
 Route::post('/posts', [PostController::class, 'store']);
+
+Route::put('/posts/{id}', [PostController::class, 'update']);
 
 Route::get('/signup', [UserController::class, 'signup']);
 

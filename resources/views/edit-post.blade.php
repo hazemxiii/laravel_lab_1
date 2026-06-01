@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <title>Create New Post</title>
+    <title>Edit Post</title>
     <style>
         body { font-family: 'Outfit', sans-serif; }
         .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
@@ -39,10 +39,9 @@
             <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                 <div class="p-8 sm:p-12">
                     <div class="mb-10 text-center">
-                        <h1 class="text-3xl font-extrabold text-slate-900">Create a New Post</h1>
+                        <h1 class="text-3xl font-extrabold text-slate-900">Edit Your Post</h1>
                     </div>
 
-                    {{-- Validation Errors --}}
                     @if ($errors->any())
                         <div class="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4">
                             <p class="text-sm font-semibold text-red-700 mb-2">Please fix the following errors:</p>
@@ -54,13 +53,14 @@
                         </div>
                     @endif
 
-                    <form action="/posts" method="POST" class="space-y-6">
+                    <form action="/posts/{{ $post->id }}" method="POST" class="space-y-6">
                         @csrf
+                        @method('PUT')
 
                         <div>
                             <label for="title" class="block text-sm font-semibold text-slate-700 mb-2 ml-1">Title</label>
                             <input type="text" name="title" id="title"
-                                value="{{ old('title') }}"
+                                value="{{ old('title', $post->title) }}"
                                 placeholder="Title..."
                                 class="w-full px-5 py-4 bg-slate-50 border {{ $errors->has('title') ? 'border-red-400 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-indigo-100 focus:border-indigo-500' }} rounded-2xl focus:ring-4 transition-all outline-none text-slate-900 placeholder:text-slate-400">
                             @error('title')
@@ -72,7 +72,7 @@
                             <label for="body" class="block text-sm font-semibold text-slate-700 mb-2 ml-1">Content</label>
                             <textarea name="body" id="body" rows="8"
                                 placeholder="Content..."
-                                class="w-full px-5 py-4 bg-slate-50 border {{ $errors->has('body') ? 'border-red-400 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-indigo-100 focus:border-indigo-500' }} rounded-2xl focus:ring-4 transition-all outline-none text-slate-900 placeholder:text-slate-400 resize-none">{{ old('body') }}</textarea>
+                                class="w-full px-5 py-4 bg-slate-50 border {{ $errors->has('body') ? 'border-red-400 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-indigo-100 focus:border-indigo-500' }} rounded-2xl focus:ring-4 transition-all outline-none text-slate-900 placeholder:text-slate-400 resize-none">{{ old('body', $post->body) }}</textarea>
                             @error('body')
                                 <p class="mt-1 ml-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
@@ -81,9 +81,9 @@
                         <div class="pt-4 flex flex-col sm:flex-row gap-4">
                             <button type="submit" class="flex-grow bg-indigo-600 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Create Post
+                                Update Post
                             </button>
                             <a href="/posts" class="sm:w-32 py-4 px-8 border border-slate-200 text-slate-600 font-semibold rounded-2xl hover:bg-slate-50 hover:text-slate-900 transition-all text-center">
                                 Cancel
