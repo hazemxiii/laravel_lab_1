@@ -7,16 +7,19 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
     public function index(Request $request)
     {
-        $posts = Post::all();
-        $deletedPost = Post::onlyTrashed()->get();
+        $user = $request->user();
+
+        $posts       = $user->posts()->get();
+        $deletedPost = Post::onlyTrashed()->where('user_id', $user->id)->get();
 
         return view('posts', [
-            'posts' => $posts,
+            'posts'       => $posts,
             'deletedPost' => $deletedPost,
         ]);
     }
@@ -26,59 +29,82 @@ class PostController extends Controller
         return view('create-post');
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $post = $request->user()->posts()->findOrFail($id);
+
         return view('posts', [
-            'posts' => collect([Post::findOrFail($id)])
+            'posts'       => collect([$post]),
+            'deletedPost' => collect(),
         ]);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        return view('edit-post', [
-            'post' => Post::findOrFail($id)
-        ]);
+        $post = $request->user()->posts()->findOrFail($id);
+
+        return view('edit-post', ['post' => $post]);
     }
 
     public function store(StorePostRequest $request)
     {
-        Post::create([
-            'title'   => $request->validated()['title'],
-            'body'    => $request->validated()['body'],
-            'user_id' => auth()->id(),
-        ]);
+        $validatedData = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('posts', 'public');
+            $validatedData['image'] = $imagePath;
+
+        }
+
+        $request->user()->posts()->create($validatedData);
 
         return redirect('/posts');
     }
 
     public function update(UpdatePostRequest $request, $id)
     {
-        $post = Post::findOrFail($id);
-        $post->title = $request->validated()['title'];
-        $post->body  = $request->validated()['body'];
-        $post->save();
+        $validatedData = $request->validated();
+        $post = $request->user()->posts()->findOrFail($id);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('posts', 'public');
+            $validatedData['image'] = $imagePath;
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+        }
+
+        $post->update($validatedData);
 
         return redirect('/posts');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        Post::findOrFail($id)->delete();
+        $request->user()->posts()->findOrFail($id)->delete();
 
         return redirect('/posts');
     }
 
-    public function restore($id)
+    public function restore(Request $request, $id)
     {
-        Post::withTrashed()->findOrFail($id)->restore();
+        Post::onlyTrashed()
+            ->where('user_id', $request->user()->id)
+            ->findOrFail($id)
+            ->restore();
 
         return redirect('/posts');
     }
 
-    public function forceDelete($id)
+    public function forceDelete(Request $request, $id)
     {
-        Post::withTrashed()->findOrFail($id)->forceDelete();
+        $post = $request->user()->posts()->onlyTrashed()->findOrFail($id);
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
+        }
+        $post->forceDelete();
 
         return redirect('/posts');
     }
 }
+

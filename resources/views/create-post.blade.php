@@ -54,7 +54,7 @@
                         </div>
                     @endif
 
-                    <form action="/posts" method="POST" class="space-y-6">
+                    <form action="/posts" method="POST" class="space-y-6" enctype="multipart/form-data">
                         @csrf
 
                         <div>
@@ -74,6 +74,15 @@
                                 placeholder="Content..."
                                 class="w-full px-5 py-4 bg-slate-50 border {{ $errors->has('body') ? 'border-red-400 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-indigo-100 focus:border-indigo-500' }} rounded-2xl focus:ring-4 transition-all outline-none text-slate-900 placeholder:text-slate-400 resize-none">{{ old('body') }}</textarea>
                             @error('body')
+                                <p class="mt-1 ml-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="image" class="block text-sm font-semibold text-slate-700 mb-2 ml-1">Image</label>
+                            <input type="file" name="image" id="image"
+                                class="w-full px-5 py-4 bg-slate-50 border {{ $errors->has('image') ? 'border-red-400 focus:ring-red-100 focus:border-red-500' : 'border-slate-200 focus:ring-indigo-100 focus:border-indigo-500' }} rounded-2xl focus:ring-4 transition-all outline-none text-slate-900 placeholder:text-slate-400">
+                            @error('image')
                                 <p class="mt-1 ml-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>

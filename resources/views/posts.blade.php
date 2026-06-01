@@ -70,6 +70,10 @@
             <article class="group relative bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
                 <div class="h-2 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
                 <div class="p-8 flex-grow">
+                    @if($post->image)
+                        <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="w-full h-48 object-cover rounded-2xl mb-4">
+                    @endif
+
                     <div class="flex items-center gap-3 mb-4">
                         <span class="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider rounded-full">Active</span>
                         <span class="text-slate-400 text-xs">• {{ rand(5, 15) }} min read</span>
@@ -128,6 +132,13 @@
                 @foreach ($deletedPost as $post)
                 <article class="group relative bg-white rounded-3xl border border-red-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col opacity-80 hover:opacity-100">
                     <div class="h-2 bg-gradient-to-r from-red-400 to-rose-500"></div>
+                    @if($post->image)
+                        <img
+                            src="{{ asset('storage/' . $post->image) }}"
+                            alt="{{ $post->title }}"
+                            class="w-full h-48 object-cover rounded-2xl mb-4 opacity-70"
+                        >
+                    @endif
 
                     <div class="p-8 flex-grow">
                         <div class="flex items-center gap-3 mb-4">

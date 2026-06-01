@@ -1,42 +1,33 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/posts', [PostController::class, 'index']);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/posts/create', [PostController::class, 'create']);
+Route::middleware('auth')->group(function () {
+    // Profile routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-Route::get('/posts/{id}', [PostController::class, 'show']);
+    // Posts routes
+    Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+    Route::get('/posts/edit/{id}', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::patch('/posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
+    Route::delete('/posts/{id}/force-delete', [PostController::class, 'forceDelete'])->name('posts.forceDelete');
+});
 
-Route::get('/posts/edit/{id}', [PostController::class, 'edit']);
-
-Route::delete('/posts/{id}', [PostController::class, 'destroy']);
-
-Route::patch('/posts/{id}/restore', [PostController::class, 'restore']);
-
-Route::delete('/posts/{id}/force-delete', [PostController::class, 'forceDelete']);
-
-Route::post('/posts', [PostController::class, 'store']);
-
-Route::put('/posts/{id}', [PostController::class, 'update']);
-
-Route::get('/signup', [UserController::class, 'signup']);
-
-Route::post('/signup', [UserController::class, 'signup_post']);
-
-Route::get('/login', [UserController::class, 'login']);
-
-Route::post('/login', [UserController::class, 'login_post']);
-
-Route::post('/logout', [UserController::class, 'logout_post']);
-?>
+require __DIR__.'/auth.php';

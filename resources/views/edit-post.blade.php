@@ -53,7 +53,7 @@
                         </div>
                     @endif
 
-                    <form action="/posts/{{ $post->id }}" method="POST" class="space-y-6">
+                    <form action="/posts/{{ $post->id }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         @method('PUT')
 
@@ -68,6 +68,25 @@
                             @enderror
                         </div>
 
+<div>
+    <label class="block text-sm font-semibold text-slate-700 mb-2 ml-1">Image</label>
+
+    @if($post->image)
+        <div class="mb-3">
+            <p class="text-xs text-slate-500 mb-1">Current Image:</p>
+            <div class="flex items-center gap-4 bg-slate-50 px-4 py-3 rounded-xl border border-slate-200">
+                <img src="{{ asset('storage/' . $post->image) }}" alt="Current" class="w-16 h-16 object-cover rounded-xl">
+                <span class="text-sm text-slate-700 truncate">{{ basename($post->image) }}</span>
+            </div>
+        </div>
+    @endif
+
+    <input type="file" name="image" id="image"
+           class="w-full px-5 py-4 bg-slate-50 border {{ $errors->has('image') ? 'border-red-400' : 'border-slate-200' }} rounded-2xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all outline-none text-slate-900 file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+    @error('image')
+        <p class="mt-1 ml-1 text-xs text-red-600">{{ $message }}</p>
+    @enderror
+</div>
                         <div>
                             <label for="body" class="block text-sm font-semibold text-slate-700 mb-2 ml-1">Content</label>
                             <textarea name="body" id="body" rows="8"
