@@ -48,7 +48,7 @@
         <header class="mb-8 flex items-center justify-between">
             <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">All Posts</h1>
             <span class="px-4 py-1.5 bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-full">
-                {{ $posts->count() }} post{{ $posts->count() !== 1 ? 's' : '' }}
+                {{ $posts->total() }} post{{ $posts->total() !== 1 ? 's' : '' }}
             </span>
         </header>
 
@@ -81,6 +81,16 @@
                     <h3 class="text-2xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
                         {{ $post['title'] }}
                     </h3>
+                    @if($post->slug)
+                        <div class="mt-2 text-xs font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200 inline-block">
+                            slug: {{ $post->slug }}
+                        </div>
+                    @endif
+                    @if($post->user)
+                        <div class="mt-2 text-xs text-slate-600 flex items-center gap-1">
+                            <span class="font-semibold text-slate-700">Creator:</span> {{ $post->user->name }} ({{ $post->user->email }})
+                        </div>
+                    @endif
                     <p class="mt-4 text-slate-600 leading-relaxed line-clamp-3">
                         {{ $post['body'] }}
                     </p>
@@ -109,6 +119,9 @@
                 </div>
             </article>
             @endforeach
+        </div>
+        <div class="mt-8 mb-12">
+            {{ $posts->links() }}
         </div>
         @endif
 
@@ -153,6 +166,16 @@
                         <h3 class="text-2xl font-bold text-slate-500 line-through decoration-red-300 group-hover:text-slate-700 transition-colors">
                             {{ $post['title'] }}
                         </h3>
+                        @if($post->slug)
+                            <div class="mt-2 text-xs font-mono text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 inline-block">
+                                slug: {{ $post->slug }}
+                            </div>
+                        @endif
+                        @if($post->user)
+                            <div class="mt-2 text-xs text-slate-500 flex items-center gap-1">
+                                <span class="font-semibold text-slate-600">Creator:</span> {{ $post->user->name }} ({{ $post->user->email }})
+                            </div>
+                        @endif
                         <p class="mt-4 text-slate-400 leading-relaxed line-clamp-3">
                             {{ $post['body'] }}
                         </p>

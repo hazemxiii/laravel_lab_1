@@ -15,7 +15,7 @@ class PostController extends Controller
     {
         $user = $request->user();
 
-        $posts       = $user->posts()->get();
+        $posts       = $user->posts()->with('user')->paginate(3);
         $deletedPost = Post::onlyTrashed()->where('user_id', $user->id)->get();
 
         return view('posts', [
